@@ -1,18 +1,32 @@
 include:
   - proxy.yaml
+x-deploy: &deploy-dev
+  deploy:
+    resources:
+      limits:
+        cpus: "1"
+        memory: 512M
+      reservations:
+        memory: 256M
+x-env_file: &env_file
+  env_file:
+    - .env
+x-restart: &restart
+  restart: always
+
 services:
   web:
     build:
       dockerfile: Dockerfile.python
-    environment:
-      - DB_NAME=wordpress
-      - DB_PASSWORD="wordpress"
-      - DB_USER=wordpress
-      - DB_HOST=db
-    restart: always
     networks:
         backend:
           ipv4_address: 172.20.0.5
+    <<: [*env_file, *restart]
+    environment:
+      - DB_NAME=${MYSQL_DATABASE}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
+      - DB_USER=${MYSQL_USER}
+      - DB_HOST=db
   db:
     image: mariadb:10.6.4-focal
     container_name: db
@@ -20,9 +34,10 @@ services:
     networks:
        backend:
           ipv4_address: 172.20.0.10
+    <<: [*deploy-dev, *env_file, *restart]
     environment:
-      - MYSQL_ROOT_PASSWORD="somewordpress"
-      - MYSQL_DATABASE=wordpress
-      - MYSQL_USER=wordpress
-      - MYSQL_PASSWORD="wordpress"
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_HOST="%"
