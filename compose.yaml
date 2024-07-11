@@ -1,0 +1,27 @@
+include:
+  - proxy.yaml
+services:
+  web:
+    build:
+      dockerfile: Dockerfile.python
+    environment:
+      - DB_NAME=wordpress
+      - DB_PASSWORD="wordpress"
+      - DB_USER=wordpress
+      - DB_HOST=172.20.0.10
+    restart: always
+    networks:
+        backend:
+          ipv4_address: 172.20.0.5
+  db:
+    image: mariadb:10.6.4-focal
+    restart: always
+    networks:
+       backend:
+          ipv4_address: 172.20.0.10
+    environment:
+      - MYSQL_ROOT_PASSWORD="somewordpress"
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD="wordpress"
+      - MYSQL_ROOT_HOST="%"
