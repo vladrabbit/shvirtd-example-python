@@ -20,7 +20,7 @@
 
 [Ссылка на репозторий](https://github.com/vladrabbit/shvirtd-example-python)
 
-```python
+```
 
 from time import datetime
 
