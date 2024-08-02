@@ -20,9 +20,4 @@
 
 [Ссылка на репозторий](https://github.com/vladrabbit/shvirtd-example-python)
 
-```
 
-from time import datetime
-
-print(datetime(now))
-```
